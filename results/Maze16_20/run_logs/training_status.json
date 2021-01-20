@@ -2,12 +2,6 @@
     "MazeAgent": {
         "checkpoints": [
             {
-                "steps": 171000,
-                "file_path": "results\\Maze16_19\\MazeAgent\\MazeAgent-171000.onnx",
-                "reward": null,
-                "creation_time": 1611064005.6847358
-            },
-            {
                 "steps": 499973,
                 "file_path": "results\\Maze16_20\\MazeAgent\\MazeAgent-499973.onnx",
                 "reward": null,
@@ -30,13 +24,19 @@
                 "file_path": "results\\Maze16_20\\MazeAgent\\MazeAgent-166962.onnx",
                 "reward": null,
                 "creation_time": 1611158540.577523
+            },
+            {
+                "steps": 170750,
+                "file_path": "results\\Maze16_20\\MazeAgent\\MazeAgent-170750.onnx",
+                "reward": null,
+                "creation_time": 1611158954.97445
             }
         ],
         "final_checkpoint": {
-            "steps": 166962,
+            "steps": 170750,
             "file_path": "results\\Maze16_20\\MazeAgent.onnx",
             "reward": null,
-            "creation_time": 1611158540.577523
+            "creation_time": 1611158954.97445
         }
     },
     "metadata": {

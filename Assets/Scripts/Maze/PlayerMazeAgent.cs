@@ -328,12 +328,7 @@ namespace Game.Maze
 
 
         }
-        // public override void CollectObservations(VectorSensor sensor)
-        //  {
-        //   sensor.AddObservation(transform.localPosition);
-        //   sensor.AddObservation(targetTransform.localPosition);
-        //     // base.CollectObservations(sensor);
-        // }
+
 
 
         public override void OnActionReceived(ActionBuffers actions)
@@ -355,8 +350,7 @@ namespace Game.Maze
                 AddReward(-0.001f);
                 reward -= 0.001f;
             }
-            //Debug.Log(moveX + "," + moveZ);
-            // base.OnActionReceived(vectorAction);
+
 
             transform.localPosition += new Vector3(moveX, 0, moveZ) * Time.deltaTime * moveSpeed;
         }

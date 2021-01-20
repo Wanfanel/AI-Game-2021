@@ -21,8 +21,6 @@ namespace Game.Scene01
         {
             sensor.AddObservation(transform.localPosition);
             sensor.AddObservation(targetTransform.localPosition);
-            
-           // base.CollectObservations(sensor);
         }
 
 
@@ -31,8 +29,7 @@ namespace Game.Scene01
            
             float moveX = actions.ContinuousActions[0];
             float moveZ = actions.ContinuousActions[1];
-           // Debug.Log(moveX + "," + moveZ);
-            // base.OnActionReceived(vectorAction);
+
 
             transform.localPosition += new Vector3(moveX, 0, moveZ)* Time.deltaTime * moveSpeed;
         }

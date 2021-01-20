@@ -1,0 +1,63 @@
+{
+    "name": "root",
+    "metadata": {
+        "timer_format_version": "0.1.0",
+        "start_time_seconds": "1610815786",
+        "python_version": "3.8.7 (tags/v3.8.7:6503f05, Dec 21 2020, 17:59:51) [MSC v.1928 64 bit (AMD64)]",
+        "command_line_arguments": "E:\\Documents\\Unity Projects\\AI Game 2021\\venv\\Scripts\\mlagents-learn config/trainer_config.yaml --run-id=Maze16_10",
+        "mlagents_version": "0.23.0",
+        "mlagents_envs_version": "0.23.0",
+        "communication_protocol_version": "1.3.0",
+        "pytorch_version": "1.7.0+cu110",
+        "numpy_version": "1.18.5",
+        "end_time_seconds": "1610815794"
+    },
+    "total": 8.1365682,
+    "count": 1,
+    "self": 0.011176499999999479,
+    "children": {
+        "run_training.setup": {
+            "total": 0.00939460000000003,
+            "count": 1,
+            "self": 0.00939460000000003
+        },
+        "TrainerController.start_learning": {
+            "total": 8.1159971,
+            "count": 1,
+            "self": 0.0002282999999980717,
+            "children": {
+                "TrainerController._reset_env": {
+                    "total": 8.113417,
+                    "count": 1,
+                    "self": 8.1130821,
+                    "children": {
+                        "demo_to_buffer": {
+                            "total": 0.0003349000000003599,
+                            "count": 1,
+                            "self": 1.4900000001816238e-05,
+                            "children": {
+                                "load_demonstration": {
+                                    "total": 0.00031999999999854367,
+                                    "count": 1,
+                                    "self": 0.00031999999999854367
+                                }
+                            }
+                        }
+                    }
+                },
+                "TrainerController._save_models": {
+                    "total": 0.0023518000000013473,
+                    "count": 1,
+                    "self": 0.0008138000000013079,
+                    "children": {
+                        "RLTrainer._checkpoint": {
+                            "total": 0.0015380000000000393,
+                            "count": 1,
+                            "self": 0.0015380000000000393
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

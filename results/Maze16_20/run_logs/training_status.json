@@ -1,0 +1,48 @@
+{
+    "MazeAgent": {
+        "checkpoints": [
+            {
+                "steps": 171000,
+                "file_path": "results\\Maze16_19\\MazeAgent\\MazeAgent-171000.onnx",
+                "reward": null,
+                "creation_time": 1611064005.6847358
+            },
+            {
+                "steps": 499973,
+                "file_path": "results\\Maze16_20\\MazeAgent\\MazeAgent-499973.onnx",
+                "reward": null,
+                "creation_time": 1611147942.706006
+            },
+            {
+                "steps": 504100,
+                "file_path": "results\\Maze16_20\\MazeAgent\\MazeAgent-504100.onnx",
+                "reward": null,
+                "creation_time": 1611148160.745763
+            },
+            {
+                "steps": 0,
+                "file_path": "results\\Maze16_20\\MazeAgent\\MazeAgent-0.onnx",
+                "reward": null,
+                "creation_time": 1611148346.4940858
+            },
+            {
+                "steps": 166962,
+                "file_path": "results\\Maze16_20\\MazeAgent\\MazeAgent-166962.onnx",
+                "reward": null,
+                "creation_time": 1611158540.577523
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 166962,
+            "file_path": "results\\Maze16_20\\MazeAgent.onnx",
+            "reward": null,
+            "creation_time": 1611158540.577523
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.2.0",
+        "mlagents_version": "0.23.0",
+        "torch_version": "1.7.0+cu110",
+        "tensorflow_version": -1
+    }
+}

@@ -1,0 +1,42 @@
+{
+    "name": "root",
+    "metadata": {
+        "timer_format_version": "0.1.0",
+        "start_time_seconds": "1610724566",
+        "python_version": "3.8.7 (tags/v3.8.7:6503f05, Dec 21 2020, 17:59:51) [MSC v.1928 64 bit (AMD64)]",
+        "command_line_arguments": "E:\\Documents\\Unity Projects\\AI Game 2021\\venv\\Scripts\\mlagents-learn config/maze_agent_c.yaml --run-id=Maze01_imit",
+        "mlagents_version": "0.23.0",
+        "mlagents_envs_version": "0.23.0",
+        "communication_protocol_version": "1.3.0",
+        "pytorch_version": "1.7.0+cu110",
+        "numpy_version": "1.18.5",
+        "end_time_seconds": "1610724628"
+    },
+    "total": 61.6752374,
+    "count": 1,
+    "self": 0.020691499999998086,
+    "children": {
+        "run_training.setup": {
+            "total": 0.00957180000000002,
+            "count": 1,
+            "self": 0.00957180000000002
+        },
+        "TrainerController.start_learning": {
+            "total": 61.6449741,
+            "count": 1,
+            "self": 0.00028110000000225455,
+            "children": {
+                "TrainerController._reset_env": {
+                    "total": 61.6442695,
+                    "count": 1,
+                    "self": 61.6442695
+                },
+                "TrainerController._save_models": {
+                    "total": 0.0004234999999965794,
+                    "count": 1,
+                    "self": 0.0004234999999965794
+                }
+            }
+        }
+    }
+}

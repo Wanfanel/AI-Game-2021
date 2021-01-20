@@ -2,6 +2,7 @@
 using Unity.MLAgents;
 using Unity.MLAgents.Sensors;
 using System.Collections.Generic;
+using Unity.MLAgents.Actuators;
 
 namespace Game.Maze
 {
@@ -40,12 +41,21 @@ namespace Game.Maze
         [SerializeField] private GameObject wallPrefab = null;
         [SerializeField] private GameObject WinModel = null;
         [SerializeField] private GameObject LoseModel = null;
+        private float reward = 0;
         public float moveSpeed = 10f;
         private bool wallgenerated = false;
         private Dictionary<Wall_position, GameObject> Wall_grid = new Dictionary<Wall_position, GameObject>();
         private Queue<GameObject> walls_not_active = new Queue<GameObject>();
+        private int[,] map_checkpoints = new int[13, 9];
 
-
+        private int GetMapCheckpoint(int x , int z)
+        {
+            return map_checkpoints[x + 6, z + 4]; 
+        }
+        private int SetMapCheckpoint(int x, int z)
+        {
+            return map_checkpoints[x + 6, z + 4] = 1;
+        }
 
         private bool Connect_z_plus(int x, int z)
         {
@@ -326,26 +336,46 @@ namespace Game.Maze
         // }
 
 
-        public override void OnActionReceived(float[] vectorAction)
+        public override void OnActionReceived(ActionBuffers actions)
         {
-            float moveX = vectorAction[0];
-            float moveZ = vectorAction[1];
-            AddReward(-0.001f);
+            base.OnActionReceived(actions);
+  
+            float moveX = actions.ContinuousActions[0];
+            float moveZ = actions.ContinuousActions[1];
+           
+
+            if (0 == GetMapCheckpoint((int)transform.localPosition.x, (int)transform.localPosition.z))
+            {
+                SetMapCheckpoint((int)transform.localPosition.x, (int)transform.localPosition.z);
+                reward+= 0.1f;
+                AddReward(0.1f);
+            }
+            else
+            {
+                AddReward(-0.001f);
+                reward -= 0.001f;
+            }
             //Debug.Log(moveX + "," + moveZ);
             // base.OnActionReceived(vectorAction);
 
             transform.localPosition += new Vector3(moveX, 0, moveZ) * Time.deltaTime * moveSpeed;
         }
 
-        public override void Heuristic(float[] actionsOut)
+        public override void Heuristic(in ActionBuffers actionsOut)
         {
-            actionsOut[0] = Input.GetAxisRaw("Horizontal");
-            actionsOut[1] = Input.GetAxisRaw("Vertical");
+  
+            actionsOut.ContinuousActions.Array[0] = Input.GetAxisRaw("Horizontal");
+            actionsOut.ContinuousActions.Array[1] = Input.GetAxisRaw("Vertical");
         }
 
         public override void OnEpisodeBegin()
         {
-           // int min_x = -3, max_x = 4, min_z = -2, max_z = 3; //hard
+            Debug.Log(reward);
+            reward = 0f;
+            map_checkpoints = new int[13, 9];
+            SetMapCheckpoint((int)transform.localPosition.x, (int)transform.localPosition.z);
+
+            // int min_x = -3, max_x = 4, min_z = -2, max_z = 3; //hard
             int min_x = -1, max_x = 2, min_z = -1, max_z = 2; //easy
             int pos_x = Random.Range(min_x, max_x) << 1,
                 pos_z = Random.Range(min_z, max_z) << 1;
@@ -372,7 +402,8 @@ namespace Game.Maze
 
         private void OnTriggerEnter(Collider other)
         {
-            AddReward(1f);
+            reward += 1f;
+            AddReward(1f);  
             WinModel.SetActive(true);
             LoseModel.SetActive(false);
             EndEpisode();
@@ -382,6 +413,7 @@ namespace Game.Maze
             if (collision.collider.CompareTag("Wall"))
             {
                 AddReward(-1f);
+                reward -= 1f;
                 WinModel.SetActive(false);
                 LoseModel.SetActive(true);
 

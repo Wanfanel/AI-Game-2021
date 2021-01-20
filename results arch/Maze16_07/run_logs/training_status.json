@@ -1,0 +1,24 @@
+{
+    "MazeAgent": {
+        "checkpoints": [
+            {
+                "steps": 18944,
+                "file_path": "results\\Maze16_07\\MazeAgent\\MazeAgent-18944.onnx",
+                "reward": -0.7892500460147858,
+                "creation_time": 1610812615.9369798
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 18944,
+            "file_path": "results\\Maze16_07\\MazeAgent.onnx",
+            "reward": -0.7892500460147858,
+            "creation_time": 1610812615.9369798
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.2.0",
+        "mlagents_version": "0.23.0",
+        "torch_version": "1.7.0+cu110",
+        "tensorflow_version": -1
+    }
+}

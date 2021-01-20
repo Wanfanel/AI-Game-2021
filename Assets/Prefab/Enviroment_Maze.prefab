@@ -1272,7 +1272,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7652615070863525252}
-  m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!23 &7652615070863525257
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -13780,13 +13780,13 @@ Camera:
     m_Bits: 256
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
-  m_TargetDisplay: 0
+  m_TargetDisplay: 1
   m_TargetEye: 3
-  m_HDR: 1
-  m_AllowMSAA: 1
+  m_HDR: 0
+  m_AllowMSAA: 0
   m_AllowDynamicResolution: 0
   m_ForceIntoRT: 0
-  m_OcclusionCulling: 1
+  m_OcclusionCulling: 0
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
 --- !u!114 &7652615071453485567
@@ -13801,7 +13801,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_RenderShadows: 1
+  m_RenderShadows: 0
   m_RequiresDepthTextureOption: 2
   m_RequiresOpaqueTextureOption: 2
   m_CameraType: 0
@@ -16634,7 +16634,7 @@ GameObject:
   - component: {fileID: 7652615071679365148}
   - component: {fileID: 7652615071679365123}
   - component: {fileID: 1695719473}
-  - component: {fileID: 1687431980481618851}
+  - component: {fileID: 1529696958}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -16683,6 +16683,8 @@ MonoBehaviour:
   m_BehaviorName: MazeAgent
   TeamId: 0
   m_UseChildSensors: 1
+  m_UseChildActuators: 1
+  m_ObservableAttributeHandling: 0
 --- !u!114 &7652615071679365151
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16703,7 +16705,7 @@ MonoBehaviour:
   wallPrefab: {fileID: 427652657452241412, guid: 88f49b79127c1f94ea316ed592997b1a, type: 3}
   WinModel: {fileID: 9102637975727714886}
   LoseModel: {fileID: 7651716251101242596}
-  moveSpeed: 3
+  moveSpeed: 10
 --- !u!114 &7652615071679365149
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16716,7 +16718,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a5c9d521e5ef4759a8246a07d52221e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DecisionPeriod: 3
+  DecisionPeriod: 5
   TakeActionsBetweenDecisions: 0
 --- !u!54 &7652615071679365148
 Rigidbody:
@@ -16750,7 +16752,8 @@ MonoBehaviour:
   m_SensorName: CameraSensor
   m_Width: 60
   m_Height: 36
-  m_Grayscale: 1
+  m_Grayscale: 0
+  m_ObservationStacks: 1
   m_Compression: 0
 --- !u!114 &1695719473
 MonoBehaviour:
@@ -16759,15 +16762,16 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7652615071679365145}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f2902496c0120472b90269f94a0aec7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   Record: 0
+  NumStepsToRecord: 1000
   DemonstrationName: Maze_Demonstration
   DemonstrationDirectory: ML_Demo
---- !u!114 &1687431980481618851
+--- !u!114 &1529696958
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -16783,10 +16787,10 @@ MonoBehaviour:
   m_DetectableTags:
   - Wall
   - Coin
-  m_RaysPerDirection: 2
+  m_RaysPerDirection: 4
   m_MaxRayDegrees: 180
-  m_SphereCastRadius: 0.4
-  m_RayLength: 4
+  m_SphereCastRadius: 0.2
+  m_RayLength: 3
   m_RayLayerMask:
     serializedVersion: 2
     m_Bits: 256

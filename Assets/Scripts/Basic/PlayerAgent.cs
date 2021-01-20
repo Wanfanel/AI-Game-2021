@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using Unity.MLAgents;
 using Unity.MLAgents.Sensors;
+using Unity.MLAgents.Actuators;
 
 namespace Game.Scene01
 {
@@ -20,25 +21,28 @@ namespace Game.Scene01
         {
             sensor.AddObservation(transform.localPosition);
             sensor.AddObservation(targetTransform.localPosition);
+            
            // base.CollectObservations(sensor);
         }
 
 
-        public override void OnActionReceived(float[] vectorAction)
+        public override void OnActionReceived(ActionBuffers actions)
         {
-            float moveX = vectorAction[0];
-            float moveZ = vectorAction[1];
-            Debug.Log(moveX + "," + moveZ);
+           
+            float moveX = actions.ContinuousActions[0];
+            float moveZ = actions.ContinuousActions[1];
+           // Debug.Log(moveX + "," + moveZ);
             // base.OnActionReceived(vectorAction);
 
             transform.localPosition += new Vector3(moveX, 0, moveZ)* Time.deltaTime * moveSpeed;
         }
 
-        public override void Heuristic(float[] actionsOut)
+        public override void Heuristic(in ActionBuffers actionsOut)
         {
-
-             actionsOut[0] = -Input.GetAxisRaw("Horizontal");
-             actionsOut[1] = Input.GetAxisRaw("Vertical");
+    
+       
+             actionsOut.ContinuousActions.Array[0] = -Input.GetAxisRaw("Horizontal");
+             actionsOut.ContinuousActions.Array[1] = Input.GetAxisRaw("Vertical");
         }
 
         public override void OnEpisodeBegin()

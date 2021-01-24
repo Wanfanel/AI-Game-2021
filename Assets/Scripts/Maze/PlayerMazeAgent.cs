@@ -352,8 +352,8 @@ namespace Game.Maze
         }
         public override void CollectObservations(VectorSensor sensor)
         {
-            sensor.AddObservation(moveX);
-            sensor.AddObservation(moveZ);
+            sensor.AddObservation(transform.localPosition.x);
+            sensor.AddObservation(transform.localPosition.z);
         }
         public override void OnActionReceived(ActionBuffers actions)
         {
@@ -371,7 +371,7 @@ namespace Game.Maze
             }
             else
             {
-                AddReward(-0.001f);
+                AddReward(-0.0001f);
                 reward -= 0.001f;
                 if (minimal_score > reward)
                     EndEpisode();
@@ -402,14 +402,17 @@ namespace Game.Maze
 
 
             transform.localPosition = new Vector3(pos_x, 0, pos_z);
-            int target_x = 0, target_z = 0;
-            do
-            {
-                target_x = UnityEngine.Random.Range(min_x, max_z) << 1;
-                target_z = UnityEngine.Random.Range(min_z, max_z) << 1;
-            } while (target_x == pos_x && target_z == pos_z);
+            //  int target_x = 0, target_z = 0;
+            //  do
+            // {
+            //    target_x = UnityEngine.Random.Range(min_x, max_z) << 1;
+            //   target_z = UnityEngine.Random.Range(min_z, max_z) << 1;
+            //  } while (target_x == pos_x && target_z == pos_z);
 
-            targetTransform.localPosition = new Vector3(target_x, 0, target_z);
+            //  targetTransform.localPosition = new Vector3(target_x, 0, target_z);
+
+       
+
 
             while (walls_not_active.Count > 0)
             {
@@ -418,7 +421,34 @@ namespace Game.Maze
             Maze_Spiral_Algorytm(0, 0);
             Connect_side_wall(-6, 4);
             Connect_side_wall(6, -4);
+
+            /// Super Easy
+            List<Vector3> positions_for_target = new List<Vector3>();
+            if ((Wall_grid.TryGetValue(new Wall_position(pos_x, pos_z + 1), out GameObject temp)))
+            {
+                if (!temp.activeSelf)
+                    positions_for_target.Add(new Vector3(pos_x, 0, pos_z + 2));
+            }
+            if ((Wall_grid.TryGetValue(new Wall_position(pos_x, pos_z - 1), out temp)))
+            {
+                if (!temp.activeSelf)
+                    positions_for_target.Add(new Vector3(pos_x, 0, pos_z - 2));
+            }
+            if ((Wall_grid.TryGetValue(new Wall_position(pos_x + 1, pos_z), out temp)))
+            {
+                if (!temp.activeSelf)
+                    positions_for_target.Add(new Vector3(pos_x + 2, 0, pos_z));
+            }
+            if ((Wall_grid.TryGetValue(new Wall_position(pos_x - 1, pos_z), out temp)))
+            {
+                if (!temp.activeSelf)
+                    positions_for_target.Add(new Vector3(pos_x - 2, 0, pos_z));
+            }
+            targetTransform.localPosition = positions_for_target[UnityEngine.Random.Range(0,positions_for_target.Count)];
+
         }
+
+
         private void OnTriggerEnter(Collider other)
         {
             reward += 1f;

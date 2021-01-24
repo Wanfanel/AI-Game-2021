@@ -1,0 +1,101 @@
+{
+    "name": "root",
+    "metadata": {
+        "timer_format_version": "0.1.0",
+        "start_time_seconds": "1611331408",
+        "python_version": "3.8.7 (tags/v3.8.7:6503f05, Dec 21 2020, 17:59:51) [MSC v.1928 64 bit (AMD64)]",
+        "command_line_arguments": "E:\\Documents\\Unity Projects\\AI Game 2021\\venv\\Scripts\\mlagents-learn config/trainer_sac.yaml --run-id=MazeAgent_24",
+        "mlagents_version": "0.23.0",
+        "mlagents_envs_version": "0.23.0",
+        "communication_protocol_version": "1.3.0",
+        "pytorch_version": "1.7.0+cu110",
+        "numpy_version": "1.18.5",
+        "end_time_seconds": "1611331475"
+    },
+    "total": 66.3925895,
+    "count": 1,
+    "self": 0.011774700000017901,
+    "children": {
+        "run_training.setup": {
+            "total": 0.06969190000000047,
+            "count": 1,
+            "self": 0.06969190000000047
+        },
+        "TrainerController.start_learning": {
+            "total": 66.31112289999999,
+            "count": 1,
+            "self": 0.00026839999999594966,
+            "children": {
+                "TrainerController._reset_env": {
+                    "total": 66.2931351,
+                    "count": 1,
+                    "self": 5.840028100000005,
+                    "children": {
+                        "demo_to_buffer": {
+                            "total": 60.453106999999996,
+                            "count": 1,
+                            "self": 4.8300000003109744e-05,
+                            "children": {
+                                "load_demonstration": {
+                                    "total": 47.4949308,
+                                    "count": 1,
+                                    "self": 46.4398104,
+                                    "children": {
+                                        "read_file": {
+                                            "total": 1.055120399999998,
+                                            "count": 1,
+                                            "self": 1.055120399999998
+                                        }
+                                    }
+                                },
+                                "make_demo_buffer": {
+                                    "total": 12.958127899999994,
+                                    "count": 1,
+                                    "self": 0.3279562000001732,
+                                    "children": {
+                                        "steps_from_proto": {
+                                            "total": 12.63017169999982,
+                                            "count": 3998,
+                                            "self": 0.4117907999996291,
+                                            "children": {
+                                                "_process_visual_observation": {
+                                                    "total": 11.871923599999718,
+                                                    "count": 7996,
+                                                    "self": 0.1355525999995848,
+                                                    "children": {
+                                                        "observation_to_np_array": {
+                                                            "total": 11.736371000000133,
+                                                            "count": 3998,
+                                                            "self": 11.736371000000133
+                                                        }
+                                                    }
+                                                },
+                                                "_process_vector_observation": {
+                                                    "total": 0.34645730000047337,
+                                                    "count": 7996,
+                                                    "self": 0.34645730000047337
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "TrainerController._save_models": {
+                    "total": 0.01771939999999006,
+                    "count": 1,
+                    "self": 0.0009688999999895032,
+                    "children": {
+                        "RLTrainer._checkpoint": {
+                            "total": 0.016750500000000557,
+                            "count": 1,
+                            "self": 0.016750500000000557
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

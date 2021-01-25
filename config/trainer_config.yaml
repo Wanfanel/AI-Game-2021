@@ -2,8 +2,8 @@ behaviors:
   MazeAgent:
     trainer_type: ppo
     hyperparameters:
-      batch_size: 1024
-      buffer_size: 10240
+      batch_size: 32
+      buffer_size: 256
       learning_rate: 0.0003
       beta: 0.005
       epsilon: 0.2
@@ -12,18 +12,23 @@ behaviors:
       learning_rate_schedule: linear
     network_settings:
       normalize: false
-      hidden_units: 128
-      num_layers: 2
+      hidden_units: 256
+      num_layers: 1
       vis_encode_type: simple
     reward_signals:
-      gail:
-        gamma: 0.99
+      curiosity:
         strength: 0.5
-        encoding_size: 1024
+        gamma: 0.995
+        encoding_size: 128
         learning_rate: 0.0003
-        use_actions: false
-        use_vail: false
-        demo_path: ML_Demo/MazeDemonstratio.demo
+#      gail:
+#       gamma: 0.99
+#      strength: 0.5
+#     encoding_size: 1024
+#    learning_rate: 0.0003
+#      use_actions: false
+#     use_vail: false
+#    demo_path: ML_Demo/MazeDemonstratio.demo
       extrinsic:
         gamma: 0.99
         strength: 1.0

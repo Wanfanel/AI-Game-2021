@@ -7,6 +7,7 @@ using System;
 
 namespace Game.Maze
 {
+
     public struct Wall_position
     {
         public int x; public int z;
@@ -38,12 +39,21 @@ namespace Game.Maze
     }
     public class PlayerMazeAgent : Agent
     {
+        const int k_NoAction = 0;  // do nothing!
+        const int k_Up = 1;
+        const int k_Down = 2;
+        const int k_Left = 3;
+        const int k_Right = 4;
+
         [SerializeField] private Transform targetTransform = null;
         [SerializeField] private GameObject wallPrefab = null;
         [SerializeField] private GameObject WinModel = null;
         [SerializeField] private GameObject LoseModel = null;
-        private float moveX = 0f;
-        private float moveZ = 0f;
+        [SerializeField] private GameObject TimeOutModel = null;
+        [SerializeField] private float timeBetweenDecisionsAtInference = 0.15f;
+        private float m_TimeSinceDecision = 0;
+
+
         private float reward = 0;
         public float moveSpeed = 10f;
         private bool wallgenerated = false;
@@ -318,16 +328,17 @@ namespace Game.Maze
         }
         public override void Initialize()
         {
+
             if (wallPrefab)
                 if (!wallgenerated)
                 {
-
+                    int y = +200;
                     for (int i = -2; i < 2; i++)
                     {
                         for (int j = -3; j < 4; j++)
                         {
                             GameObject wall = Instantiate(wallPrefab, Vector3.zero, Quaternion.identity, transform.parent) as GameObject;
-                            wall.transform.localPosition = new Vector3(j << 1, 0, (i << 1) + 1);
+                            wall.transform.localPosition = new Vector3(j << 1, y, (i << 1) + 1);
                             Wall_grid.Add(new Wall_position(j << 1, (i << 1) + 1), wall);
                         }
                     }
@@ -336,7 +347,7 @@ namespace Game.Maze
                         for (int j = -3; j < 3; j++)
                         {
                             GameObject wall = Instantiate(wallPrefab, Vector3.zero, Quaternion.identity, transform.parent) as GameObject;
-                            wall.transform.localPosition = new Vector3((j << 1) + 1, 0, i << 1);
+                            wall.transform.localPosition = new Vector3((j << 1) + 1, y, i << 1);
                             Wall_grid.Add(new Wall_position((j << 1) + 1, i << 1), wall);
                         }
                     }
@@ -350,50 +361,96 @@ namespace Game.Maze
 
 
         }
-        public override void CollectObservations(VectorSensor sensor)
+        /*public override void CollectObservations(VectorSensor sensor)
         {
             sensor.AddObservation(transform.localPosition.x);
             sensor.AddObservation(transform.localPosition.z);
-        }
+        }*/
         public override void OnActionReceived(ActionBuffers actions)
         {
 
-             moveX = actions.ContinuousActions[0];
-             moveZ = actions.ContinuousActions[1];
-
-
-            if (0 == GetMapCheckpoint((int)transform.localPosition.x, (int)transform.localPosition.z))
+            //moveX = actions.ContinuousActions[0];
+            // moveZ = actions.ContinuousActions[1];
+            switch (actions.DiscreteActions[0])
             {
-                SetMapCheckpoint((int)transform.localPosition.x, (int)transform.localPosition.z);
+                case k_NoAction:
+                    // do nothing
+                    break;
+                case k_Right:
+                    transform.position = transform.position + new Vector3(1f, 0, 0f);
+                    break;
+                case k_Left:
+                    transform.position = transform.position + new Vector3(-1f, 0, 0f);
+                    break;
+                case k_Up:
+                    transform.position = transform.position + new Vector3(0f, 0, 1f);
+                    break;
+                case k_Down:
+                    transform.position = transform.position + new Vector3(0f, 0, -1f);
+                    break;
+                default:
+                    throw new ArgumentException("Invalid action value");
+            }
+
+
+            if (0 == GetMapCheckpoint((int)(transform.localPosition.x + 0.5f), (int)(transform.localPosition.z + 0.5f)))
+            {
+                SetMapCheckpoint((int)(transform.localPosition.x + 0.5f), (int)(transform.localPosition.z + 0.5f));
+
                 reward += 0.1f;
-                AddReward(0.1f);
-                minimal_score = reward - 0.015f;
+                //  AddReward(0.1f);
+                minimal_score = reward - 0.1f;
             }
             else
             {
                 AddReward(-0.0001f);
-                reward -= 0.001f;
+                reward -= 0.0001f;
                 if (minimal_score > reward)
+                {
+                    WinModel.SetActive(false);
+                    LoseModel.SetActive(false);
+                    TimeOutModel.SetActive(true);
                     EndEpisode();
+                }
             }
 
 
-            transform.localPosition += new Vector3(moveX, 0, moveZ) * Time.deltaTime * moveSpeed;
+        
         }
         public override void Heuristic(in ActionBuffers actionsOut)
         {
 
-            actionsOut.ContinuousActions.Array[0] = Input.GetAxisRaw("Horizontal");
-            actionsOut.ContinuousActions.Array[1] = Input.GetAxisRaw("Vertical");
-        }
+            var discreteActionsOut = actionsOut.DiscreteActions;
+            discreteActionsOut[0] = k_NoAction;
+            if (Input.GetKey(KeyCode.D))
+            {
+                discreteActionsOut[0] = k_Right;
+            }
+            if (Input.GetKey(KeyCode.W))
+            {
+                discreteActionsOut[0] = k_Up;
+            }
+            if (Input.GetKey(KeyCode.A))
+            {
+                discreteActionsOut[0] = k_Left;
+            }
+            if (Input.GetKey(KeyCode.S))
+            {
+                discreteActionsOut[0] = k_Down;
+            }
+        
+        // actionsOut.ContinuousActions.Array[0] = Input.GetAxisRaw("Horizontal");
+        // actionsOut.ContinuousActions.Array[1] = Input.GetAxisRaw("Vertical");
+    }
         public override void OnEpisodeBegin()
         {
 
             Debug.Log(reward);
             reward = 0f;
-            minimal_score = reward - 0.015f;
+            minimal_score = reward - 0.1f;
             map_checkpoints = new int[13, 9];
-            SetMapCheckpoint((int)transform.localPosition.x, (int)transform.localPosition.z);
+
+
 
             // int min_x = -3, max_x = 4, min_z = -2, max_z = 3; //hard
             int min_x = -1, max_x = 2, min_z = -1, max_z = 2; //easy
@@ -402,16 +459,17 @@ namespace Game.Maze
 
 
             transform.localPosition = new Vector3(pos_x, 0, pos_z);
-            //  int target_x = 0, target_z = 0;
-            //  do
-            // {
-            //    target_x = UnityEngine.Random.Range(min_x, max_z) << 1;
-            //   target_z = UnityEngine.Random.Range(min_z, max_z) << 1;
-            //  } while (target_x == pos_x && target_z == pos_z);
+            SetMapCheckpoint((int)(transform.localPosition.x + 0.5f), (int)(transform.localPosition.z + 0.5f));
+            int target_x = 0, target_z = 0;
+            do
+            {
+                target_x = UnityEngine.Random.Range(min_x, max_z) << 1;
+                target_z = UnityEngine.Random.Range(min_z, max_z) << 1;
+            } while (target_x == pos_x && target_z == pos_z);
 
-            //  targetTransform.localPosition = new Vector3(target_x, 0, target_z);
+            targetTransform.localPosition = new Vector3(target_x, 0, target_z);
 
-       
+
 
 
             while (walls_not_active.Count > 0)
@@ -421,40 +479,41 @@ namespace Game.Maze
             Maze_Spiral_Algorytm(0, 0);
             Connect_side_wall(-6, 4);
             Connect_side_wall(6, -4);
-
+            /*
             /// Super Easy
+            ///  1 Extrime easy 2 Super Easy
+            int distance = 1;
             List<Vector3> positions_for_target = new List<Vector3>();
             if ((Wall_grid.TryGetValue(new Wall_position(pos_x, pos_z + 1), out GameObject temp)))
             {
                 if (!temp.activeSelf)
-                    positions_for_target.Add(new Vector3(pos_x, 0, pos_z + 2));
+                    positions_for_target.Add(new Vector3(pos_x, 0, pos_z + distance));
             }
             if ((Wall_grid.TryGetValue(new Wall_position(pos_x, pos_z - 1), out temp)))
             {
                 if (!temp.activeSelf)
-                    positions_for_target.Add(new Vector3(pos_x, 0, pos_z - 2));
+                    positions_for_target.Add(new Vector3(pos_x, 0, pos_z - distance));
             }
             if ((Wall_grid.TryGetValue(new Wall_position(pos_x + 1, pos_z), out temp)))
             {
                 if (!temp.activeSelf)
-                    positions_for_target.Add(new Vector3(pos_x + 2, 0, pos_z));
+                    positions_for_target.Add(new Vector3(pos_x + distance, 0, pos_z));
             }
             if ((Wall_grid.TryGetValue(new Wall_position(pos_x - 1, pos_z), out temp)))
             {
                 if (!temp.activeSelf)
-                    positions_for_target.Add(new Vector3(pos_x - 2, 0, pos_z));
+                    positions_for_target.Add(new Vector3(pos_x - distance, 0, pos_z));
             }
-            targetTransform.localPosition = positions_for_target[UnityEngine.Random.Range(0,positions_for_target.Count)];
+            targetTransform.localPosition = positions_for_target[UnityEngine.Random.Range(0, positions_for_target.Count)];*/
 
         }
-
-
         private void OnTriggerEnter(Collider other)
         {
             reward += 1f;
             AddReward(1f);
             WinModel.SetActive(true);
             LoseModel.SetActive(false);
+            TimeOutModel.SetActive(false);
             EndEpisode();
         }
         private void OnCollisionEnter(Collision collision)
@@ -465,9 +524,30 @@ namespace Game.Maze
                 reward -= 1f;
                 WinModel.SetActive(false);
                 LoseModel.SetActive(true);
+                TimeOutModel.SetActive(false);
 
                 EndEpisode();
             }
         }
+        public void FixedUpdate()
+        {
+            if (Academy.Instance.IsCommunicatorOn)
+            {
+                RequestDecision();
+            }
+            else
+            {
+                if (m_TimeSinceDecision >= timeBetweenDecisionsAtInference)
+                {
+                    m_TimeSinceDecision = 0f;
+                    RequestDecision();
+                }
+                else
+                {
+                    m_TimeSinceDecision += Time.fixedDeltaTime;
+                }
+            }
+        }
+
     }
 }

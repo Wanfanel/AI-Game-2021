@@ -23,14 +23,14 @@ behaviors:
         gamma: 0.995
         encoding_size: 128
         learning_rate: 0.0003
-      gail:
-        gamma: 0.99
-        strength: 0.5
-        encoding_size: 1024
-        learning_rate: 0.0003
-        use_actions: false
-        use_vail: false
-        demo_path: ML_Demo/MazeDemonstratio_6.demo
+#      gail:
+#        gamma: 0.99
+#        strength: 0.5
+#        encoding_size: 1024
+#        learning_rate: 0.0003
+#        use_actions: false
+#        use_vail: false
+#        demo_path: ML_Demo/MazeDemonstratio_6.demo
       extrinsic:
         gamma: 0.995
         strength: 1.0

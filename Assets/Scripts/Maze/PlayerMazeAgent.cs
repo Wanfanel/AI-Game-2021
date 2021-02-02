@@ -51,6 +51,7 @@ namespace Game.Maze
         [SerializeField] private GameObject LoseModel = null;
         [SerializeField] private GameObject TimeOutModel = null;
         [SerializeField] private Transform model_position = null;
+        [SerializeField] private Transform player_body= null;
         private Vector3 last_position;
         [SerializeField] private float timeBetweenDecisionsAtInference = 0.15f;
         private float m_TimeSinceDecision = 0;
@@ -368,7 +369,7 @@ namespace Game.Maze
         public override void OnActionReceived(ActionBuffers actions)
         {
             m_TimeSinceDecision = 0f;
-            last_position = transform.localPosition;
+            last_position = player_body.localPosition;
             //moveX = actions.ContinuousActions[0];
             // moveZ = actions.ContinuousActions[1];
             AddReward(-0.01f);
@@ -379,32 +380,32 @@ namespace Game.Maze
                     // do nothing
                     break;
                 case k_Right:
-                    transform.position = transform.position + new Vector3(1f, 0, 0f);
+                    player_body.localPosition = player_body.localPosition + new Vector3(1f, 0, 0f);
                     break;
                 case k_Left:
-                    transform.position = transform.position + new Vector3(-1f, 0, 0f);
+                    player_body.localPosition = player_body.localPosition + new Vector3(-1f, 0, 0f);
                     break;
                 case k_Up:
-                    transform.position = transform.position + new Vector3(0f, 0, 1f);
+                    player_body.localPosition = player_body.localPosition + new Vector3(0f, 0, 1f);
                     break;
                 case k_Down:
-                    transform.position = transform.position + new Vector3(0f, 0, -1f);
+                    player_body.localPosition = player_body.localPosition + new Vector3(0f, 0, -1f);
                     break;
                 default:
                     throw new ArgumentException("Invalid action value");
             }
 
 
-            if (0 == GetMapCheckpoint((int)(transform.localPosition.x + 0.5f), (int)(transform.localPosition.z + 0.5f)))
-            {
-                SetMapCheckpoint((int)(transform.localPosition.x + 0.5f), (int)(transform.localPosition.z + 0.5f));
+          //  if (0 == GetMapCheckpoint((int)(transform.localPosition.x + 0.5f), (int)(transform.localPosition.z + 0.5f)))
+           // {
+           //     SetMapCheckpoint((int)(transform.localPosition.x + 0.5f), (int)(transform.localPosition.z + 0.5f));
 
                 //  reward += 0.05f;
                 //  AddReward(0.05f);
                 //   minimal_score = reward - 0.02f;
-            }
+          //  }
             // else
-            {
+          //  {
                 //AddReward(-0.01f);
                 //reward -= 0.01f;
                 //  if (minimal_score > reward)
@@ -414,7 +415,7 @@ namespace Game.Maze
                 //    TimeOutModel.SetActive(true);
                 //     EndEpisode();
                 // }
-            }
+         //   }
 
 
 
@@ -466,8 +467,8 @@ namespace Game.Maze
                 pos_z = UnityEngine.Random.Range(min_z, max_z) << 1;
 
 
-            transform.localPosition = new Vector3(pos_x, 0, pos_z);
-            SetMapCheckpoint((int)(transform.localPosition.x + 0.5f), (int)(transform.localPosition.z + 0.5f));
+            player_body.localPosition = new Vector3(pos_x, 0, pos_z);
+           // SetMapCheckpoint((int)(transform.localPosition.x + 0.5f), (int)(transform.localPosition.z + 0.5f));
             int target_x = 0, target_z = 0;
             do
             {
@@ -476,7 +477,7 @@ namespace Game.Maze
             } while (target_x == pos_x && target_z == pos_z);
 
             targetTransform.localPosition = new Vector3(target_x, 0, target_z);
-            last_position = transform.localPosition;
+            last_position = player_body.localPosition;
 
 
 
@@ -559,7 +560,7 @@ namespace Game.Maze
         }
         public void Update()
         {
-            model_position.localPosition = Vector3.Lerp(last_position, transform.localPosition, (m_TimeSinceDecision / timeBetweenDecisionsAtInference));
+            model_position.localPosition = Vector3.Lerp(last_position, player_body.localPosition, (m_TimeSinceDecision / timeBetweenDecisionsAtInference));
         }
     }
 

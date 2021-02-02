@@ -50,6 +50,8 @@ namespace Game.Maze
         [SerializeField] private GameObject WinModel = null;
         [SerializeField] private GameObject LoseModel = null;
         [SerializeField] private GameObject TimeOutModel = null;
+        [SerializeField] private Transform model_position = null;
+        private Vector3 last_position;
         [SerializeField] private float timeBetweenDecisionsAtInference = 0.15f;
         private float m_TimeSinceDecision = 0;
 
@@ -59,7 +61,7 @@ namespace Game.Maze
         private bool wallgenerated = false;
         private Dictionary<Wall_position, GameObject> Wall_grid = new Dictionary<Wall_position, GameObject>();
         private Queue<GameObject> walls_not_active = new Queue<GameObject>();
-        private int[,] map_checkpoints = new int[13, 9];
+        private int[,] map_checkpoints = new int[14, 10];
         private float minimal_score;
 
         private int GetMapCheckpoint(int x, int z)
@@ -332,19 +334,19 @@ namespace Game.Maze
             if (wallPrefab)
                 if (!wallgenerated)
                 {
-                    int y = +200;
-                    for (int i = -2; i < 2; i++)
+                    int y = 0;
+                    for (int i = -1; i < 1; i++) // full -2 2
                     {
-                        for (int j = -3; j < 4; j++)
+                        for (int j = -1; j <= 1; j++) // full -3 3
                         {
                             GameObject wall = Instantiate(wallPrefab, Vector3.zero, Quaternion.identity, transform.parent) as GameObject;
                             wall.transform.localPosition = new Vector3(j << 1, y, (i << 1) + 1);
                             Wall_grid.Add(new Wall_position(j << 1, (i << 1) + 1), wall);
                         }
                     }
-                    for (int i = -2; i < 3; i++)
+                    for (int i = -1; i <= 1; i++) //-2 2
                     {
-                        for (int j = -3; j < 3; j++)
+                        for (int j = -1; j < 1; j++) // -3-3
                         {
                             GameObject wall = Instantiate(wallPrefab, Vector3.zero, Quaternion.identity, transform.parent) as GameObject;
                             wall.transform.localPosition = new Vector3((j << 1) + 1, y, i << 1);
@@ -352,11 +354,8 @@ namespace Game.Maze
                         }
                     }
 
-
                     wallgenerated = true;
                 }
-
-
 
 
 
@@ -368,9 +367,12 @@ namespace Game.Maze
         }*/
         public override void OnActionReceived(ActionBuffers actions)
         {
-
+            m_TimeSinceDecision = 0f;
+            last_position = transform.localPosition;
             //moveX = actions.ContinuousActions[0];
             // moveZ = actions.ContinuousActions[1];
+            AddReward(-0.01f);
+            reward -= 0.01f;
             switch (actions.DiscreteActions[0])
             {
                 case k_NoAction:
@@ -397,25 +399,25 @@ namespace Game.Maze
             {
                 SetMapCheckpoint((int)(transform.localPosition.x + 0.5f), (int)(transform.localPosition.z + 0.5f));
 
-                reward += 0.1f;
-                //  AddReward(0.1f);
-                minimal_score = reward - 0.1f;
+                //  reward += 0.05f;
+                //  AddReward(0.05f);
+                //   minimal_score = reward - 0.02f;
             }
-            else
+            // else
             {
-                AddReward(-0.0001f);
-                reward -= 0.0001f;
-                if (minimal_score > reward)
-                {
-                    WinModel.SetActive(false);
-                    LoseModel.SetActive(false);
-                    TimeOutModel.SetActive(true);
-                    EndEpisode();
-                }
+                //AddReward(-0.01f);
+                //reward -= 0.01f;
+                //  if (minimal_score > reward)
+                //   {
+                //     WinModel.SetActive(false);
+                //    LoseModel.SetActive(false);
+                //    TimeOutModel.SetActive(true);
+                //     EndEpisode();
+                // }
             }
 
 
-        
+
         }
         public override void Heuristic(in ActionBuffers actionsOut)
         {
@@ -438,17 +440,23 @@ namespace Game.Maze
             {
                 discreteActionsOut[0] = k_Down;
             }
-        
-        // actionsOut.ContinuousActions.Array[0] = Input.GetAxisRaw("Horizontal");
-        // actionsOut.ContinuousActions.Array[1] = Input.GetAxisRaw("Vertical");
-    }
+
+            // actionsOut.ContinuousActions.Array[0] = Input.GetAxisRaw("Horizontal");
+            // actionsOut.ContinuousActions.Array[1] = Input.GetAxisRaw("Vertical");
+        }
         public override void OnEpisodeBegin()
         {
 
             Debug.Log(reward);
+            if (reward < 1f && reward > -1f)
+            {
+                WinModel.SetActive(false);
+                LoseModel.SetActive(false);
+                TimeOutModel.SetActive(true);
+            }
             reward = 0f;
-            minimal_score = reward - 0.1f;
-            map_checkpoints = new int[13, 9];
+            // minimal_score = reward - 0.02f;
+            map_checkpoints = new int[14, 10];
 
 
 
@@ -468,7 +476,7 @@ namespace Game.Maze
             } while (target_x == pos_x && target_z == pos_z);
 
             targetTransform.localPosition = new Vector3(target_x, 0, target_z);
-
+            last_position = transform.localPosition;
 
 
 
@@ -509,8 +517,8 @@ namespace Game.Maze
         }
         private void OnTriggerEnter(Collider other)
         {
-            reward += 1f;
-            AddReward(1f);
+            reward = 1f;
+            SetReward(1f);
             WinModel.SetActive(true);
             LoseModel.SetActive(false);
             TimeOutModel.SetActive(false);
@@ -520,8 +528,8 @@ namespace Game.Maze
         {
             if (collision.collider.CompareTag("Wall"))
             {
-                AddReward(-1f);
-                reward -= 1f;
+                SetReward(-1f);
+                reward = -1f;
                 WinModel.SetActive(false);
                 LoseModel.SetActive(true);
                 TimeOutModel.SetActive(false);
@@ -531,23 +539,29 @@ namespace Game.Maze
         }
         public void FixedUpdate()
         {
-            if (Academy.Instance.IsCommunicatorOn)
+         //   if (Academy.Instance.IsCommunicatorOn)
+          //  {
+           //     RequestDecision();
+          //  }
+           // else
             {
-                RequestDecision();
-            }
-            else
-            {
-                if (m_TimeSinceDecision >= timeBetweenDecisionsAtInference)
+               if (m_TimeSinceDecision >= timeBetweenDecisionsAtInference)
                 {
-                    m_TimeSinceDecision = 0f;
-                    RequestDecision();
+                    //  m_TimeSinceDecision = 0f;
+                    //  RequestDecision();
                 }
                 else
                 {
                     m_TimeSinceDecision += Time.fixedDeltaTime;
                 }
             }
-        }
 
+        }
+        public void Update()
+        {
+            model_position.localPosition = Vector3.Lerp(last_position, transform.localPosition, (m_TimeSinceDecision / timeBetweenDecisionsAtInference));
+        }
     }
+
+
 }
